@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema targetNamespace="http://schemas.microsoft.com/sqlserver/2008/10/servicebroker/externalactivator"
+           xmlns="http://schemas.microsoft.com/sqlserver/2008/10/servicebroker/externalactivator"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified"
+           version="1.0"
+           >
+
+  <xs:element name="Activator" type="activatorType"/>
+  <xs:complexType name="activatorType">
+    <xs:sequence>
+      <xs:element name="NotificationServiceList">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="NotificationService" type="notificationServiceType" minOccurs="1" maxOccurs="unbounded" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="ApplicationServiceList">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="ApplicationService" type="applicationServiceType" minOccurs="1" maxOccurs="unbounded" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="LogSettings">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="LogFilter">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="TraceFlag" type="traceFlagType" minOccurs="0" maxOccurs="unbounded" />
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="notificationServiceType">
+    <xs:sequence>
+      <xs:element name="Description" type="xs:string" />
+      <xs:element name="ConnectionString" type="connectionStringType"/>
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required" />
+    <xs:attribute name="id" type="xs:unsignedInt" use="required" />
+    <xs:attribute name="enabled" type="xs:boolean" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="connectionStringType">
+    <xs:sequence>
+      <xs:element name="Unencrypted" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="applicationServiceType">
+    <xs:sequence>
+      <xs:element name="OnNotification" type="onNotificationType"/>
+      <xs:element name="LaunchInfo" type="launchInfoType"/>
+      <xs:element name="Concurrency" type="concurrencyType"/>
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required" />
+    <xs:attribute name="enabled" type="xs:boolean" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="onNotificationType">
+    <xs:sequence>
+      <xs:element name="ServerName" type="xs:string"/>
+      <xs:element name="DatabaseName" type="xs:string"/>
+      <xs:element name="SchemaName" type="xs:string"/>
+      <xs:element name="QueueName" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="launchInfoType">
+    <xs:sequence>
+      <xs:element name="ImagePath" type="xs:string"/>
+      <xs:element name="CmdLineArgs" type="xs:string"/>
+      <xs:element name="WorkDir" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="concurrencyType">
+    <xs:attribute name="min" type="concurrencyMinType" use="required" />
+    <xs:attribute name="max" type="xs:unsignedShort" use="required" />
+  </xs:complexType>
+
+  <xs:simpleType name="traceFlagType">
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="Error"/>
+      <xs:enumeration value="Warning"/>
+      <xs:enumeration value="Information"/>
+      <xs:enumeration value="Verbose"/>
+      <xs:enumeration value="All Levels"/>
+      <xs:enumeration value="Application Monitor"/>
+      <xs:enumeration value="Configuration Manager"/>
+      <xs:enumeration value="Global"/>
+      <xs:enumeration value="Recovery Log"/>
+      <xs:enumeration value="Imported Methods"/>
+      <xs:enumeration value="Notification Service"/>
+      <xs:enumeration value="Service Broker"/>
+      <xs:enumeration value="All Modules"/>
+      <xs:enumeration value="Asynchronous Updates"/>
+      <xs:enumeration value="Threads"/>
+      <xs:enumeration value="All Entities"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="concurrencyMinType">
+    <xs:restriction base="xs:unsignedShort">
+      <xs:maxInclusive value="16"/>
+    </xs:restriction>
+  </xs:simpleType>
+    
+</xs:schema>

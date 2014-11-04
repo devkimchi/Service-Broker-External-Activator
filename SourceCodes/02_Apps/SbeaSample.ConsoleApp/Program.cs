@@ -6,6 +6,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace SbeaSample.ConsoleApp
 {
@@ -157,17 +159,31 @@ namespace SbeaSample.ConsoleApp
                                 }
                                 else
                                 {
-                                    using (var stream = new MemoryStream(messageBody.Value))
-                                    using (var sr = new StreamReader(stream))
-                                    using (var endConversationCommand = conn.CreateCommand())
+                                    try
                                     {
-                                        var result = sr.ReadToEnd();
-                                        File.WriteAllText("result.xml", result);
+                                        using (var stream = new MemoryStream(messageBody.Value))
+                                        using (var sendCommand = conn.CreateCommand())
+                                        {
+                                            var xml = XDocument.Load(stream);
+                                            var result = SaveTrackingDetails(xml);
 
-                                        endConversationCommand.Transaction = transaction;
-                                        endConversationCommand.CommandText = "END CONVERSATION @handle";
-                                        endConversationCommand.Parameters.Add(new SqlParameter("@handle", conversationHandle));
-                                        endConversationCommand.ExecuteNonQuery();
+                                            sendCommand.CommandText = "SEND ON CONVERSATION @handle MESSAGE TYPE [TrackingResponse] (@body)";
+                                            sendCommand.Parameters.Add(new SqlParameter("@handle", conversationHandle));
+                                            sendCommand.Parameters.Add(new SqlParameter("@body", result));
+                                            sendCommand.ExecuteNonQuery();
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        var sb = new StringBuilder();
+                                        sb.AppendLine("----------");
+                                        sb.AppendLine(ex.Message);
+                                        sb.AppendLine();
+                                        sb.AppendLine(ex.StackTrace);
+                                        sb.AppendLine("==========");
+
+                                        File.AppendAllText(String.Format(_errorLogPath, DateTime.Today), sb.ToString());
+                                        throw;
                                     }
                                 }
                             }
@@ -184,6 +200,12 @@ namespace SbeaSample.ConsoleApp
         private static string BracketizeName(string sysname)
         {
             return String.Format("[{0}]", sysname.Replace("]", "]]"));
+        }
+
+        private static string SaveTrackingDetails(XDocument xml)
+        {
+
+            return "Saved";
         }
     }
 }

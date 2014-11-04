@@ -31,17 +31,17 @@
           <AssociatedConnUserName />
           <FullPath>01_Create.Tables.sql</FullPath>
         </FileNode>
-        <FileNode Name="02_Create.ServiceBrokerObjects.sql">
+        <FileNode Name="02_Create.StoredProcedures.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:localhost:True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>localhost</AssociatedConnSrvName>
           <AssociatedConnUserName />
-          <FullPath>02_Create.ServiceBrokerObjects.sql</FullPath>
+          <FullPath>02_Create.StoredProcedures.sql</FullPath>
         </FileNode>
-        <FileNode Name="03_Create.StoredProcedures.sql">
+        <FileNode Name="03_Create.ServiceBrokerObjects.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:localhost:True</AssociatedConnectionMoniker>
           <AssociatedConnSrvName>localhost</AssociatedConnSrvName>
           <AssociatedConnUserName />
-          <FullPath>03_Create.StoredProcedures.sql</FullPath>
+          <FullPath>03_Create.ServiceBrokerObjects.sql</FullPath>
         </FileNode>
         <FileNode Name="04_Create.Triggers.sql">
           <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:localhost:True</AssociatedConnectionMoniker>

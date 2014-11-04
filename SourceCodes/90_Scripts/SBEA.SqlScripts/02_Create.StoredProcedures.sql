@@ -1,8 +1,8 @@
 /*
 		00. Creates databases
 		01. Creates tables
-		02. Creates service broker objects
-	**	03. Creates stored procedures
+	**	02. Creates stored procedures
+		03. Creates service broker objects
 		04. Creates triggers
 		05. Grant permissions
 */
@@ -14,14 +14,18 @@ BEGIN
 	DROP PROCEDURE [usp_SendTrackingRequest]
 END
 
+IF EXISTS (SELECT * FROM sys.objects WHERE type = 'P' AND name = 'usp_GetTrackingResponse')
+BEGIN
+	DROP PROCEDURE [usp_GetTrackingResponse]
+END
+
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
 
--- Stored Procedure which will be used to send the Audit Message to the Queue
--- Error handling has been avoided to keep the sample code brief
+-- Sends tracking request message to the queue.
 CREATE PROCEDURE [usp_SendTrackingRequest]
 	@productId		AS INT,
 	@trackingType	AS NVARCHAR(8),
@@ -42,7 +46,7 @@ BEGIN
 		FROM
 			SERVICE [TrackingInitiatorService]
 		TO
-			SERVICE '[TrackingTargetService]'
+			SERVICE 'TrackingTargetService'
 		ON
 			CONTRACT [TrackingContract]
 		WITH
@@ -53,4 +57,28 @@ BEGIN
 		MESSAGE TYPE [TrackingRequest] (@data)
 
 END
+GO
+
+-- Gets the tracking response message from the queue.
+CREATE PROCEDURE [usp_GetTrackingResponse]
+AS
+BEGIN
+
+	SET NOCOUNT ON;
+
+    DECLARE @handle	AS UNIQUEIDENTIFIER
+
+    WAITFOR	(RECEIVE TOP(1) @handle = CONVERSATION_HANDLE FROM [dbo].[TrackingResponseQueue]), TIMEOUT 10000
+		
+    IF @handle IS NULL
+	BEGIN
+		RETURN
+	END
+
+    END CONVERSATION @handle;
+
+END
+GO
+
+USE [master]
 GO

@@ -1,8 +1,8 @@
 /*
 		00. Creates databases
 		01. Creates tables
-	**	02. Creates service broker objects
-		03. Creates stored procedures
+		02. Creates stored procedures
+	**	03. Creates service broker objects
 		04. Creates triggers
 		05. Grant permissions
 */
@@ -22,9 +22,9 @@ GO
 -- Events, Services, Queues, Contracts and Message Types
 
 -- Drops events.
-IF EXISTS (SELECT * FROM sys.event_notifications WHERE name = 'TrackingEvent')
+IF EXISTS (SELECT * FROM sys.event_notifications WHERE name = 'TrackingEventNotification')
 BEGIN
-	DROP EVENT NOTIFICATION [TrackingEvent]
+	DROP EVENT NOTIFICATION [TrackingEventNotification]
 		ON QUEUE [TrackingRequestQueue]
 END
 
@@ -39,9 +39,9 @@ BEGIN
 	DROP SERVICE [TrackingTargetService]
 END
 
-IF EXISTS (SELECT * FROM sys.services WHERE name = 'TrackingExternalActivatorService')
+IF EXISTS (SELECT * FROM sys.services WHERE name = 'TrackingNotificationService')
 BEGIN
-	DROP SERVICE [TrackingExternalActivatorService]
+	DROP SERVICE [TrackingNotificationService]
 END
 
 -- Drops queues.
@@ -55,9 +55,9 @@ BEGIN
 	DROP QUEUE [TrackingResponseQueue]
 END
 
-IF EXISTS (SELECT * FROM sys.service_queues WHERE name = 'TrackingExternalActivatorQueue')
+IF EXISTS (SELECT * FROM sys.service_queues WHERE name = 'TrackingNotificationQueue')
 BEGIN
-	DROP QUEUE [TrackingExternalActivatorQueue]
+	DROP QUEUE [TrackingNotificationQueue]
 END
 
 -- Drops contracts.
@@ -110,13 +110,18 @@ GO
 CREATE QUEUE [TrackingResponseQueue]
 	WITH 
 		STATUS = ON,
-		RETENTION = OFF
+		RETENTION = OFF,
+		ACTIVATION (
+			STATUS = ON,
+			PROCEDURE_NAME = [usp_GetTrackingResponse],
+			MAX_QUEUE_READERS = 10,
+			EXECUTE AS SELF)
 	ON [PRIMARY]
 GO
 
 -- Queue for the external activator app to monitor.
 -- The external activator app catches jobs to be done when messages arrive in this queue.
-CREATE QUEUE [TrackingExternalActivatorQueue]
+CREATE QUEUE [TrackingNotificationQueue]
 	WITH
 		STATUS = ON,
 		RETENTION = OFF 
@@ -137,14 +142,17 @@ GO
 
 -- Service for the external activator app.
 -- This uses the default contract for event notifications.
-CREATE SERVICE [TrackingExternalActivatorService]
-	ON QUEUE [TrackingExternalActivatorQueue] ([http://schemas.microsoft.com/SQL/Notifications/PostEventNotification])
+CREATE SERVICE [TrackingNotificationService]
+	ON QUEUE [TrackingNotificationQueue] ([http://schemas.microsoft.com/SQL/Notifications/PostEventNotification])
 GO
 
 -- Event notification for the external activator app.
 -- Event will be raised when messages arrive in the request queue on the target service.
-CREATE EVENT NOTIFICATION [TrackingEvent]
+CREATE EVENT NOTIFICATION [TrackingEventNotification]
 	ON QUEUE [TrackingRequestQueue]
 	FOR QUEUE_ACTIVATION
-	TO SERVICE '[TrackingExternalActivatorService]', 'current database'
+	TO SERVICE 'TrackingNotificationService', 'current database'
+GO
+
+USE [master]
 GO

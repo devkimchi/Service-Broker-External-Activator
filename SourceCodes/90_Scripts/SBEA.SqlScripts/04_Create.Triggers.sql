@@ -1,8 +1,8 @@
 /*
 		00. Creates databases
 		01. Creates tables
-		02. Creates service broker objects
-		03. Creates stored procedures
+		02. Creates stored procedures
+		03. Creates service broker objects
 	**	04. Creates triggers
 		05. Grant permissions
 */
@@ -97,4 +97,7 @@ BEGIN
 	EXECUTE [dbo].[usp_SendTrackingRequest] @productId, @trackingType, @inserted, @deleted
 
 END
+GO
+
+USE [master]
 GO

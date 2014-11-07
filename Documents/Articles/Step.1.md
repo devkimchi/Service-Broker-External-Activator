@@ -1,4 +1,4 @@
-# Service Broker External Activator for SQL Server Step by Step #
+# Service Broker External Activator for SQL Server Step by Step #1 #
 
 In SQL Server, unlike [triggers](http://msdn.microsoft.com/en-us/library/ms178110(v=sql.110).aspx), Service Broker (SB) works asynchronously. The benefits of using SB can be found in [this document](http://msdn.microsoft.com/en-us/library/ms171578(v=sql.105).aspx). One of great benefits using SB is that it is not only comsumed within SQL Server, but also it calls an application outside the SQL Server through External Activator (EA). There are many relevant articles for SB and internal activator. But it is hard to find some useful EA related documents.
 
@@ -10,6 +10,7 @@ Its sample source codes can be found at: [devkimchi/Service-Broker-External-Acti
 > * Step 2: SQL Server Setup
 > * Step 3: External Activator Application Development
 > * Step 4: External Activator Service Configuration
+> * Step 5: Putting Them Altogether
 
 In this article, we are going to install Service Broker External Activator Service.
  
@@ -28,18 +29,18 @@ In this post, we are using SQL Server 2012. When you click the link above, you c
 
 During the installation, you will see a screen like below:
 
-![](SSBEAS.Install.01.png)
+![](http://blob.devkimchi.com/devkimchiwp/2014/11/SSBEAS.Install.01.png)
 
 Choose **Built-in Account** and `NETWORK SERVICE` for now. Once it is installed, open the `Services` window on Control Panel. Then you can find the Windows Service installed.
 
-![](SSBEAS.Install.02.png)
+![](http://blob.devkimchi.com/devkimchiwp/2014/11/SSBEAS.Install.02.png)
 
 
 ### Changing Log On Account to Virtual Account ###
 
 It's not started yet. Before manually starting this Service, we need to change its log on account. It has been currently bound with `NETWORK SERVICE` but this is not right. For Windows 7, Windows Server 2008 or later, you might have heard of the term, **Virtual Account**. This is not a real account but to work as like a service account in Windows 7, Windows Server 2008 or later which is not on Active Directory. As we have already installed Service Broker External Activator Service, we have a virtual account called, `NT SERVICE\SSBExternalActivator`. So, we can simply change the log on account to this, without password.
 
-![](SSBEAS.Install.03.png)
+![](http://blob.devkimchi.com/devkimchiwp/2014/11/SSBEAS.Install.03.png)
 
 
 ### Granting Permissions to Virtual Account on Application Directory ###
@@ -48,11 +49,11 @@ We need more job to do to start this service. The Windows Service has been insta
 
 **(This is optional)** Find the `SSB EA Admin` account group from `Local users and Groups` and add a service account to run the Windows Service. If you want to use the virtual account only, this is not necessary.
 
-![](SSBEAS.Install.04.png)
+![](http://blob.devkimchi.com/devkimchiwp/2014/11/SSBEAS.Install.04.png)
 
 Allow `Full Control` onto the `SSB EA Admin` account group and the virtual account, `NT SERVICE\SSBExternalActivator`.
 
-![](SSBEAS.Install.05.png)
+![](http://blob.devkimchi.com/devkimchiwp/2014/11/SSBEAS.Install.05.png)
 
 
 ---

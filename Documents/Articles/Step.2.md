@@ -1,8 +1,6 @@
-# Service Broker External Activator for SQL Server Step by Step #
+# Service Broker External Activator for SQL Server Step by Step #2 #
 
-In SQL Server, unlike [triggers](http://msdn.microsoft.com/en-us/library/ms178110(v=sql.110).aspx), Service Broker (SB) works asynchronously. The benefits of using SB can be found in [this document](http://msdn.microsoft.com/en-us/library/ms171578(v=sql.105).aspx). One of great benefits using SB is that it is not only comsumed within SQL Server, but also it calls an application outside the SQL Server through External Activator (EA). There are many relevant articles for SB and internal activator. But it is hard to find some useful EA related documents.
-
-Basically, this series of articles are based on several resources including [Announcing Service Broker External Activator](http://blogs.msdn.com/b/sql_service_broker/archive/2008/11/21/announcing-service-broker-external-activator.aspx), [Get Started With Using External Activator](http://blogs.msdn.com/b/sql_service_broker/archive/2009/05/18/get-started-with-using-external-activator.aspx), [Sample activated application](http://blogs.msdn.com/b/sql_service_broker/archive/2010/03/10/sample-activated-application.aspx), and [Auditing Data Changes in SQL Server using Service Broker's External Activator](http://ajitananthram.wordpress.com/2012/05/26/auditing-external-activator). Throughout these posts, you will get used to SB and EA.
+From the previous post, [Step 1: Service Broker External Activator Service Setup], we have installed a Windows Service application for Service Broker External Activator. In this article, we are going to setup SQL Server to enable Service Broker.
 
 Its sample source codes can be found at: [devkimchi/Service-Broker-External-Activator](https://github.com/devkimchi/Service-Broker-External-Activator)
 
@@ -10,9 +8,8 @@ Its sample source codes can be found at: [devkimchi/Service-Broker-External-Acti
 > * **Step 2: SQL Server Setup**
 > * Step 3: External Activator Application Development
 > * Step 4: External Activator Service Configuration
+> * Step 5: Putting Them Altogether
 
-From the previous post, [Step 1: Service Broker External Activator Service Setup], we have installed a Windows Service application for Service Broker External Activator. In this article, we are going to setup SQL Server to enable Service Broker.
- 
 
 ## SQL Server Setup for Service Broker ##
 
@@ -84,6 +81,7 @@ CREATE TABLE [dbo].[TrackingLogs] (
 GO
 ```
 
+<a name="creating-stored-procedures"></a>
 ### Creating Stored Procedures ###
 
 We have just created two tables. So far so good. Now, we are going to create stored procedures. They will send messages to EA or receive messages from EA.

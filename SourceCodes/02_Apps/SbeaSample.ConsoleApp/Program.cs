@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Data;
 using System.Data.SqlClient;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
 using System.Xml.Linq;
 
 namespace SbeaSample.ConsoleApp
@@ -17,7 +13,7 @@ namespace SbeaSample.ConsoleApp
         /// <summary>
         /// Database server for source DB.
         /// </summary>
-        private static string _sourceServer = ConfigurationManager.AppSettings["SourceServer"];
+        private static readonly string _sourceServer = ConfigurationManager.AppSettings["SourceServer"];
 
         /// <summary>
         /// Database name for source DB.
@@ -113,6 +109,10 @@ namespace SbeaSample.ConsoleApp
                 File.AppendAllText(String.Format(_errorLogPath, DateTime.Today), sb.ToString());
             }
         }
+
+        /// <summary>
+        /// Processes the request from Service Broker.
+        /// </summary>
         private static void ProcessRequests()
         {
             try
@@ -155,7 +155,6 @@ namespace SbeaSample.ConsoleApp
 
                             try
                             {
-
                                 if (messageTypeName == _endDialogMessageType || messageTypeName == _errorMessageType)
                                 {
                                     if (messageTypeName == _errorMessageType)
@@ -207,6 +206,7 @@ namespace SbeaSample.ConsoleApp
                 command.ExecuteNonQuery();
             }
         }
+
         /// <summary>
         /// Services request messages by doing all the necessary computation.
         /// </summary>
@@ -222,13 +222,16 @@ namespace SbeaSample.ConsoleApp
                 case "INSERT":
                     inserted = changes.Element("Inserted").Element("Row");
                     break;
+
                 case "UPDATE":
                     inserted = changes.Element("Inserted").Element("Row");
                     deleted = changes.Element("Deleted").Element("Row");
                     break;
+
                 case "DELETE":
                     deleted = changes.Element("Deleted").Element("Row");
                     break;
+
                 default:
                     throw new InvalidOperationException("Invalid tracking type");
             }
@@ -237,7 +240,7 @@ namespace SbeaSample.ConsoleApp
             {
                 conn.Open();
 
-                var fields = new List<string>() {"ProductId", "Name", "Description", "Price"};
+                var fields = new List<string>() { "ProductId", "Name", "Description", "Price" };
                 foreach (var field in fields)
                 {
                     object oldValue = null;
@@ -248,14 +251,17 @@ namespace SbeaSample.ConsoleApp
                             oldValue = Convert.DBNull;
                             newValue = inserted.Element(field).Value;
                             break;
+
                         case "UPDATE":
                             oldValue = deleted.Element(field).Value;
                             newValue = inserted.Element(field).Value;
                             break;
+
                         case "DELETE":
                             oldValue = deleted.Element(field).Value;
                             newValue = Convert.DBNull;
                             break;
+
                         default:
                             throw new InvalidOperationException("Invalid tracking type");
                     }

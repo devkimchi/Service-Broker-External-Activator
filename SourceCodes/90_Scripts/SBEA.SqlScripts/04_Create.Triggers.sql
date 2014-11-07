@@ -89,7 +89,7 @@ BEGIN
 	DECLARE @inserted		AS XML
 	DECLARE @deleted		AS XML
 
-	SELECT	@productId		= ProductId FROM inserted
+	SELECT	@productId		= ProductId FROM deleted
 	SET		@trackingType	= 'DELETE'
 	SET		@inserted		= NULL
 	SET		@deleted		= (SELECT * FROM deleted FOR XML RAW, ELEMENTS)

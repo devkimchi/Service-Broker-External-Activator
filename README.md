@@ -7,7 +7,7 @@ This is a sample code for Service Broker External Activator of SQL Server 2012 (
 
 This code is explained in:
 
-* English: http://devkimchi.com/
+* English: [Service Broker External Activator for SQL Server Step by Step #1](http://devkimchi.com/811/service-broker-external-activator-for-sql-server-step-by-step-1/)
 * Korean: http://blog.aliencube.org/
 
 

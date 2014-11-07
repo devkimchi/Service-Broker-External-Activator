@@ -10,6 +10,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Properties", "Properties", 
 		..\Documents\Properties\SharedAssemblyInfo.cs = ..\Documents\Properties\SharedAssemblyInfo.cs
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{FACDE63B-1DCC-4EF4-B35D-6FE113C99DA6}"
+	ProjectSection(SolutionItems) = preProject
+		..\Documents\Samples\SampleMessage.xml = ..\Documents\Samples\SampleMessage.xml
+	EndProjectSection
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01_Configs", "01_Configs", "{0FAE9BB1-555C-4864-85E1-2D7EAD54FF19}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SbeaSample.Configs", "01_Configs\SbeaSample.Configs\SbeaSample.Configs.csproj", "{D2E45B1A-1030-4BD9-97CF-B55A707B8038}"
@@ -44,6 +49,7 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{66781FFD-D811-497F-BA3E-6C8396D8B9B0} = {3D28B713-CE52-42E0-8DFB-18647B6FABC3}
+		{FACDE63B-1DCC-4EF4-B35D-6FE113C99DA6} = {3D28B713-CE52-42E0-8DFB-18647B6FABC3}
 		{D2E45B1A-1030-4BD9-97CF-B55A707B8038} = {0FAE9BB1-555C-4864-85E1-2D7EAD54FF19}
 		{95A295AD-5F00-486E-B79C-39F68B2C8CE3} = {F510EFDB-27FF-4DB0-8F0E-B05DE6792079}
 	EndGlobalSection

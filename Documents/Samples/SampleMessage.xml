@@ -1,0 +1,20 @@
+﻿<Changes>
+    <ProductId>2</ProductId>
+    <TrackingType>UPDATE</TrackingType>
+    <Inserted>
+        <Row>
+            <ProductId>2</ProductId>
+            <Name>Product 2</Name>
+            <Description>Description 2</Description>
+            <Price>19.99</Price>
+        </Row>
+    </Inserted>
+    <Deleted>
+        <Row>
+            <ProductId>2</ProductId>
+            <Name>Product 2</Name>
+            <Description>Description 2</Description>
+            <Price>29.99</Price>
+        </Row>
+    </Deleted>
+</Changes>

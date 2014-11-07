@@ -43,7 +43,7 @@ BEGIN
 					@trackingType			AS TrackingType,
 					COALESCE(@inserted, '')	AS Inserted,
 					COALESCE(@deleted, '')	AS Deleted
-				 FOR XML PATH(''), ROOT('changes'), ELEMENTS)
+				 FOR XML PATH(''), ROOT('Changes'), ELEMENTS)
 
 	DECLARE @handle	AS UNIQUEIDENTIFIER
 

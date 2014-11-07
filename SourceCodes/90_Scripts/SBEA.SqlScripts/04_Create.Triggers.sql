@@ -45,7 +45,7 @@ BEGIN
 
 	SELECT	@productId		= ProductId FROM inserted
 	SET		@trackingType	= 'INSERT'
-	SET		@inserted		= (SELECT * FROM inserted FOR XML RAW, ELEMENTS)
+	SET		@inserted		= (SELECT * FROM inserted FOR XML PATH(''), ROOT('Row'), ELEMENTS)
 	SET		@deleted		= NULL
 
 	EXECUTE [dbo].[usp_SendTrackingRequest] @productId, @trackingType, @inserted, @deleted
@@ -68,8 +68,8 @@ BEGIN
 
 	SELECT	@productId		= ProductId FROM inserted
 	SET		@trackingType	= 'UPDATE'
-	SET		@inserted		= (SELECT * FROM inserted FOR XML RAW, ELEMENTS)
-	SET		@deleted		= (SELECT * FROM deleted FOR XML RAW, ELEMENTS)
+	SET		@inserted		= (SELECT * FROM inserted FOR XML PATH(''), ROOT('Row'), ELEMENTS)
+	SET		@deleted		= (SELECT * FROM deleted FOR XML PATH(''), ROOT('Row'), ELEMENTS)
 
 	EXECUTE [dbo].[usp_SendTrackingRequest] @productId, @trackingType, @inserted, @deleted
 
@@ -92,7 +92,7 @@ BEGIN
 	SELECT	@productId		= ProductId FROM deleted
 	SET		@trackingType	= 'DELETE'
 	SET		@inserted		= NULL
-	SET		@deleted		= (SELECT * FROM deleted FOR XML RAW, ELEMENTS)
+	SET		@deleted		= (SELECT * FROM deleted FOR XML PATH(''), ROOT('Row'), ELEMENTS)
 
 	EXECUTE [dbo].[usp_SendTrackingRequest] @productId, @trackingType, @inserted, @deleted
 

@@ -38,7 +38,12 @@ BEGIN
 
 	DECLARE @data	AS XML
 
-	SET @data = (SELECT @productId AS ProductId, @trackingType AS TrackingType, @inserted AS Inserted, @deleted AS Deleted FOR XML RAW, ELEMENTS)
+	SET @data = (SELECT
+					@productId				AS ProductId,
+					@trackingType			AS TrackingType,
+					COALESCE(@inserted, '')	AS Inserted,
+					COALESCE(@deleted, '')	AS Deleted
+				 FOR XML PATH(''), ROOT('changes'), ELEMENTS)
 
 	DECLARE @handle	AS UNIQUEIDENTIFIER
 
@@ -68,7 +73,12 @@ BEGIN
 
     DECLARE @handle	AS UNIQUEIDENTIFIER
 
-    WAITFOR	(RECEIVE TOP(1) @handle = CONVERSATION_HANDLE FROM [dbo].[TrackingResponseQueue]), TIMEOUT 10000
+    WAITFOR (
+		RECEIVE
+			TOP(1) @handle = CONVERSATION_HANDLE
+		FROM
+			[dbo].[TrackingResponseQueue]
+	), TIMEOUT 10000
 		
     IF @handle IS NULL
 	BEGIN

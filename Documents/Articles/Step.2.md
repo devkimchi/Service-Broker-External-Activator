@@ -1,10 +1,10 @@
 # Service Broker External Activator for SQL Server Step by Step #2 #
 
-From the previous post, [Step 1: Service Broker External Activator Service Setup], we have installed a Windows Service application for Service Broker External Activator. In this article, we are going to setup SQL Server to enable Service Broker.
+From the previous post, [Step 1: Service Broker External Activator Service Setup](http://devkimchi.com/811/service-broker-external-activator-for-sql-server-step-by-step-1/), we have installed a Windows Service application for Service Broker External Activator (EA). In this article, we are going to setup SQL Server to enable Service Broker (SB).
 
 Its sample source codes can be found at: [devkimchi/Service-Broker-External-Activator](https://github.com/devkimchi/Service-Broker-External-Activator)
 
-> * Step 1: Service Broker External Activator Service Setup
+> * [Step 1: Service Broker External Activator Service Setup](http://devkimchi.com/811/service-broker-external-activator-for-sql-server-step-by-step-1/)
 > * **Step 2: SQL Server Setup**
 > * Step 3: External Activator Application Development
 > * Step 4: External Activator Service Configuration
@@ -42,19 +42,19 @@ USE [SourceDB]
 GO
 
 CREATE TABLE [dbo].[Products] (
-	[ProductId]		[int]			IDENTITY(1,1)	NOT NULL,
-	[Name]			[nvarchar](50)					NOT NULL,
-	[Description]	[nvarchar](50)					NULL,
-	[Price]			[decimal](18, 2)				NOT NULL,
-	CONSTRAINT [PK_Products] PRIMARY KEY CLUSTERED (
-		[ProductId] ASC
-	) WITH (
-		PAD_INDEX = OFF,
-		STATISTICS_NORECOMPUTE = OFF,
-		IGNORE_DUP_KEY = OFF,
-		ALLOW_ROW_LOCKS = ON,
-		ALLOW_PAGE_LOCKS = ON
-	) ON [PRIMARY]
+    [ProductId]     [int]           IDENTITY(1,1)   NOT NULL,
+    [Name]          [nvarchar](50)                  NOT NULL,
+    [Description]   [nvarchar](50)                  NULL,
+    [Price]         [decimal](18, 2)                NOT NULL,
+    CONSTRAINT [PK_Products] PRIMARY KEY CLUSTERED (
+        [ProductId] ASC
+    ) WITH (
+        PAD_INDEX = OFF,
+        STATISTICS_NORECOMPUTE = OFF,
+        IGNORE_DUP_KEY = OFF,
+        ALLOW_ROW_LOCKS = ON,
+        ALLOW_PAGE_LOCKS = ON
+    ) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
 
@@ -62,21 +62,21 @@ USE [TrackingDB]
 GO
 
 CREATE TABLE [dbo].[TrackingLogs] (
-	[TrackingLogId]	[int]			IDENTITY(1,1)	NOT NULL,
-	[Source]		[nvarchar](50)					NOT NULL,
-	[Field]			[nvarchar](50)					NOT NULL,
-	[TrackingType]	[nvarchar](8)					NOT NULL,
-	[OldValue]		[nvarchar](MAX)					NULL,
-	[NewValue]		[nvarchar](MAX)					NULL,
-	CONSTRAINT [PK_TrackingLogs] PRIMARY KEY CLUSTERED (
-		[TrackingLogId] ASC
-	) WITH (
-		PAD_INDEX = OFF,
-		STATISTICS_NORECOMPUTE = OFF,
-		IGNORE_DUP_KEY = OFF,
-		ALLOW_ROW_LOCKS = ON,
-		ALLOW_PAGE_LOCKS = ON
-	) ON [PRIMARY]
+    [TrackingLogId] [int]           IDENTITY(1,1)   NOT NULL,
+    [Source]        [nvarchar](50)                  NOT NULL,
+    [Field]         [nvarchar](50)                  NOT NULL,
+    [TrackingType]  [nvarchar](8)                   NOT NULL,
+    [OldValue]      [nvarchar](MAX)                 NULL,
+    [NewValue]      [nvarchar](MAX)                 NULL,
+    CONSTRAINT [PK_TrackingLogs] PRIMARY KEY CLUSTERED (
+        [TrackingLogId] ASC
+    ) WITH (
+        PAD_INDEX = OFF,
+        STATISTICS_NORECOMPUTE = OFF,
+        IGNORE_DUP_KEY = OFF,
+        ALLOW_ROW_LOCKS = ON,
+        ALLOW_PAGE_LOCKS = ON
+    ) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
 ```
@@ -91,39 +91,39 @@ USE [SourceDB]
 GO
 
 CREATE PROCEDURE [usp_SendTrackingRequest]
-	@productId		AS INT,
-	@trackingType	AS NVARCHAR(8),
-	@inserted		AS XML,
-	@deleted		AS XML
+    @productId      AS INT,
+    @trackingType   AS NVARCHAR(8),
+    @inserted       AS XML,
+    @deleted        AS XML
 AS
 BEGIN
 
-	SET NOCOUNT ON;
+    SET NOCOUNT ON;
 
-	DECLARE @data	AS XML
+    DECLARE @data    AS XML
 
-	SET @data = (SELECT
-					@productId				AS ProductId,
-					@trackingType			AS TrackingType,
-					COALESCE(@inserted, '')	AS Inserted,
-					COALESCE(@deleted, '')	AS Deleted
-				 FOR XML PATH(''), ROOT('Changes'), ELEMENTS)
+    SET @data = (SELECT
+                    @productId              AS ProductId,
+                    @trackingType           AS TrackingType,
+                    COALESCE(@inserted, '') AS Inserted,
+                    COALESCE(@deleted, '')  AS Deleted
+                 FOR XML PATH(''), ROOT('Changes'), ELEMENTS)
 
-	DECLARE @handle	AS UNIQUEIDENTIFIER
+    DECLARE @handle    AS UNIQUEIDENTIFIER
 
-	BEGIN DIALOG CONVERSATION @handle  
-		FROM
-			SERVICE [TrackingInitiatorService]
-		TO
-			SERVICE 'TrackingTargetService'
-		ON
-			CONTRACT [TrackingContract]
-		WITH
-			ENCRYPTION = OFF;
+    BEGIN DIALOG CONVERSATION @handle  
+        FROM
+            SERVICE [TrackingInitiatorService]
+        TO
+            SERVICE 'TrackingTargetService'
+        ON
+            CONTRACT [TrackingContract]
+        WITH
+            ENCRYPTION = OFF;
 
-	SEND
-		ON CONVERSATION @handle
-		MESSAGE TYPE [TrackingRequest] (@data)
+    SEND
+        ON CONVERSATION @handle
+        MESSAGE TYPE [TrackingRequest] (@data)
 
 END
 GO
@@ -147,17 +147,30 @@ Make sure that the stored procedure only starts conversation and send the messag
 This is the most important part of this post to setup Service Broker. Consuming SB requires many different entities such as `Message Type`, `Contract`, `Queue`, `Service` and `Event Notification`. Now, we are creating those objects in this order &ndash; `Message Type`, `Contract`, `Queue`, `Service` and `Event Notification` as they are all dependent on another.
 
 
+#### Enable Service Broker ####
+
+As `SourceDB` is the one to track changes, we need to enable SB on this database. Make sure that this uses `ALTER DATABASE` statement, which means that all transactions must be completed before executing the `ALTER` statement. However, for some databases, this might not be possible. In this case, like below, put additional clause, `WITH ROLLBACK IMMEDIATE`. By doing this, any transaction at the instance of running `ALTER DATABASE` statement will be rolled back.
+
+```sql 
+IF EXISTS (SELECT * FROM sys.databases WHERE name = 'SourceDB' AND is_broker_enabled = 0)
+BEGIN
+    ALTER DATABASE [SourceDB] SET NEW_BROKER WITH ROLLBACK IMMEDIATE
+END
+GO
+```
+
+
 #### `Mesage Type` ####
 
 We have two message types &ndash; request and response. They define how messages are formed.
 
 ```sql
 CREATE MESSAGE TYPE [TrackingRequest]
-	VALIDATION = WELL_FORMED_XML
+    VALIDATION = WELL_FORMED_XML
 GO
 
 CREATE MESSAGE TYPE [TrackingResponse]
-	VALIDATION = NONE	
+    VALIDATION = NONE    
 GO
 ```
 
@@ -168,9 +181,9 @@ Both message types are bunched in a contract.
 
 ```sql
 CREATE CONTRACT [TrackingContract] (
-	[TrackingRequest]	SENT BY INITIATOR, 
-	[TrackingResponse]	SENT BY TARGET
-	)
+    [TrackingRequest]   SENT BY INITIATOR, 
+    [TrackingResponse]  SENT BY TARGET
+    )
 GO
 ```
 
@@ -183,24 +196,24 @@ Messages are stored in queues before being consumed by services.
 
 ```sql
 CREATE QUEUE [TrackingRequestQueue]
-	WITH
-		STATUS = ON,
-		RETENTION = OFF
-	ON [PRIMARY]
+    WITH
+        STATUS = ON,
+        RETENTION = OFF
+    ON [PRIMARY]
 GO
 
 CREATE QUEUE [TrackingResponseQueue]
-	WITH 
-		STATUS = ON,
-		RETENTION = OFF
-	ON [PRIMARY]
+    WITH 
+        STATUS = ON,
+        RETENTION = OFF
+    ON [PRIMARY]
 GO
 
 CREATE QUEUE [TrackingNotificationQueue]
-	WITH
-		STATUS = ON,
-		RETENTION = OFF 
-	ON [PRIMARY]
+    WITH
+        STATUS = ON,
+        RETENTION = OFF 
+    ON [PRIMARY]
 GO
 ```
 
@@ -213,15 +226,15 @@ Services manage queues which a contract combines.
 
 ```sql
 CREATE SERVICE [TrackingInitiatorService]
-	ON QUEUE [TrackingResponseQueue] ([TrackingContract])
+    ON QUEUE [TrackingResponseQueue] ([TrackingContract])
 GO
 
 CREATE SERVICE [TrackingTargetService]
-	ON QUEUE [TrackingRequestQueue] ([TrackingContract])
+    ON QUEUE [TrackingRequestQueue] ([TrackingContract])
 GO
 
 CREATE SERVICE [TrackingNotificationService]
-	ON QUEUE [TrackingNotificationQueue] ([http://schemas.microsoft.com/SQL/Notifications/PostEventNotification])
+    ON QUEUE [TrackingNotificationQueue] ([http://schemas.microsoft.com/SQL/Notifications/PostEventNotification])
 GO
 ```
 
@@ -234,9 +247,9 @@ We have created all necessary message types, contracts, queues and services. Now
 
 ```sql
 CREATE EVENT NOTIFICATION [TrackingEventNotification]
-	ON QUEUE [TrackingRequestQueue]
-	FOR QUEUE_ACTIVATION
-	TO SERVICE 'TrackingNotificationService', 'current database'
+    ON QUEUE [TrackingRequestQueue]
+    FOR QUEUE_ACTIVATION
+    TO SERVICE 'TrackingNotificationService', 'current database'
 GO
 ```
 
@@ -251,70 +264,70 @@ We've created databases, tables, stored procedures and SB objects. Now, we are c
 
 ```sql
 CREATE TRIGGER [dbo].[trg_INS_Products]
-	ON [dbo].[Products]
-	AFTER INSERT
+    ON [dbo].[Products]
+    AFTER INSERT
 AS
 BEGIN
 
-	SET NOCOUNT ON
+    SET NOCOUNT ON
 
-	DECLARE @productId		AS INT
-	DECLARE @trackingType	AS NVARCHAR(8)
-	DECLARE @inserted		AS XML
-	DECLARE @deleted		AS XML
+    DECLARE @productId      AS INT
+    DECLARE @trackingType   AS NVARCHAR(8)
+    DECLARE @inserted       AS XML
+    DECLARE @deleted        AS XML
 
-	SELECT	@productId		= ProductId FROM inserted
-	SET		@trackingType	= 'INSERT'
-	SET		@inserted		= (SELECT * FROM inserted FOR XML PATH(''), ROOT('Row'), ELEMENTS)
-	SET		@deleted		= NULL
+    SELECT  @productId      = ProductId FROM inserted
+    SET     @trackingType   = 'INSERT'
+    SET     @inserted       = (SELECT * FROM inserted FOR XML PATH(''), ROOT('Row'), ELEMENTS)
+    SET     @deleted        = NULL
 
-	EXECUTE [dbo].[usp_SendTrackingRequest] @productId, @trackingType, @inserted, @deleted
+    EXECUTE [dbo].[usp_SendTrackingRequest] @productId, @trackingType, @inserted, @deleted
 
 END
 GO
 
 CREATE TRIGGER [dbo].[trg_UPD_Products]
-	ON [dbo].[Products]
-	AFTER UPDATE
+    ON [dbo].[Products]
+    AFTER UPDATE
 AS
 BEGIN
 
-	SET NOCOUNT ON
+    SET NOCOUNT ON
 
-	DECLARE @productId		AS INT
-	DECLARE @trackingType	AS NVARCHAR(8)
-	DECLARE @inserted		AS XML
-	DECLARE @deleted		AS XML
+    DECLARE @productId      AS INT
+    DECLARE @trackingType   AS NVARCHAR(8)
+    DECLARE @inserted       AS XML
+    DECLARE @deleted        AS XML
 
-	SELECT	@productId		= ProductId FROM inserted
-	SET		@trackingType	= 'UPDATE'
-	SET		@inserted		= (SELECT * FROM inserted FOR XML PATH(''), ROOT('Row'), ELEMENTS)
-	SET		@deleted		= (SELECT * FROM deleted FOR XML PATH(''), ROOT('Row'), ELEMENTS)
+    SELECT  @productId      = ProductId FROM inserted
+    SET     @trackingType   = 'UPDATE'
+    SET     @inserted       = (SELECT * FROM inserted FOR XML PATH(''), ROOT('Row'), ELEMENTS)
+    SET     @deleted        = (SELECT * FROM deleted FOR XML PATH(''), ROOT('Row'), ELEMENTS)
 
-	EXECUTE [dbo].[usp_SendTrackingRequest] @productId, @trackingType, @inserted, @deleted
+    EXECUTE [dbo].[usp_SendTrackingRequest] @productId, @trackingType, @inserted, @deleted
 
 END
 GO
 
 CREATE TRIGGER [dbo].[trg_DEL_Products]
-	ON [dbo].[Products]
-	AFTER DELETE
+    ON [dbo].[Products]
+    AFTER DELETE
 AS
 BEGIN
 
-	SET NOCOUNT ON
+    SET NOCOUNT ON
 
-	DECLARE @productId		AS INT
-	DECLARE @trackingType	AS NVARCHAR(8)
-	DECLARE @inserted		AS XML
-	DECLARE @deleted		AS XML
+    DECLARE @productId      AS INT
+    DECLARE @trackingType   AS NVARCHAR(8)
+    DECLARE @inserted       AS XML
+    DECLARE @deleted        AS XML
 
-	SELECT	@productId		= ProductId FROM deleted
-	SET		@trackingType	= 'DELETE'
-	SET		@inserted		= NULL
-	SET		@deleted		= (SELECT * FROM deleted FOR XML PATH(''), ROOT('Row'), ELEMENTS)
+    SELECT  @productId      = ProductId FROM deleted
+    SET     @trackingType   = 'DELETE'
+    SET     @inserted       = NULL
+    SET     @deleted        = (SELECT * FROM deleted FOR XML PATH(''), ROOT('Row'), ELEMENTS)
 
-	EXECUTE [dbo].[usp_SendTrackingRequest] @productId, @trackingType, @inserted, @deleted
+    EXECUTE [dbo].[usp_SendTrackingRequest] @productId, @trackingType, @inserted, @deleted
 
 END
 GO
@@ -327,7 +340,7 @@ For more readability, triggers for `INSERT`, `UPDATE` and `DELETE` are separated
 
 For Windows 7, Windows Server 2008 or later, you might have heard of the term, **Virtual Account**. This is not a real account but to work as like a service account in Windows 7, Windows Server 2008 or later which is not on Active Directory. As we have already installed Service Broker External Activator Service, we have a virtual account, `NT SERVICE\SSBExternalActivator`. This account has already been assigned to the Windows Service application.
 
-![](SSBEAS.Install.03.png)
+![](http://blob.devkimchi.com/devkimchiwp/2014/11/SSBEAS.Install.03.png)
 
 Permissions need to be granted onto two accounts &ndash; `NT SERVICE\SSBExternalActivator` and `NT AUTHORITY\ANONYMOUS LOGON`. As the former is a virtual account, it actually doesn't exist. Therefore, in order to access to database, it instead uses the latter. Keep this in your mind. Of course, for your production purpose, it would be better to create a service account.
 
@@ -337,7 +350,7 @@ GO
 
 IF NOT EXISTS (SELECT * FROM sys.syslogins WHERE name = 'NT SERVICE\SSBExternalActivator')
 BEGIN
-	CREATE LOGIN [NT SERVICE\SSBExternalActivator] FROM WINDOWS
+    CREATE LOGIN [NT SERVICE\SSBExternalActivator] FROM WINDOWS
 END
 GO
 
@@ -346,7 +359,7 @@ GO
 
 IF NOT EXISTS (SELECT * FROM sys.sysusers WHERE name = 'NT SERVICE\SSBExternalActivator')
 BEGIN
-	CREATE USER [NT SERVICE\SSBExternalActivator] FOR LOGIN [NT SERVICE\SSBExternalActivator]
+    CREATE USER [NT SERVICE\SSBExternalActivator] FOR LOGIN [NT SERVICE\SSBExternalActivator]
 END
 GO
 
@@ -358,7 +371,7 @@ GO
 
 IF NOT EXISTS (SELECT * FROM sys.sysusers WHERE name = 'NT SERVICE\SSBExternalActivator')
 BEGIN
-	CREATE USER [NT SERVICE\SSBExternalActivator] FOR LOGIN [NT SERVICE\SSBExternalActivator]
+    CREATE USER [NT SERVICE\SSBExternalActivator] FOR LOGIN [NT SERVICE\SSBExternalActivator]
 END
 GO
 
@@ -367,25 +380,25 @@ GO
 
 -- Allows CONNECT to [SourceDB].
 GRANT CONNECT
-	TO [NT SERVICE\SSBExternalActivator]
+    TO [NT SERVICE\SSBExternalActivator]
 GO
  
 -- Allows RECEIVE from the queue for the external actvator app.
 GRANT RECEIVE
-	ON [TrackingNotificationQueue]
-	TO [NT SERVICE\SSBExternalActivator]
+    ON [TrackingNotificationQueue]
+    TO [NT SERVICE\SSBExternalActivator]
 GO
  
 -- Allows VIEW DEFINITION right on the service for the external activator app.
 GRANT VIEW DEFINITION
-	ON SERVICE::[TrackingNotificationService]
-	TO [NT SERVICE\SSBExternalActivator]
+    ON SERVICE::[TrackingNotificationService]
+    TO [NT SERVICE\SSBExternalActivator]
 GO
  
 -- Allows REFRENCES right on the queue schema for the external activator app.
 GRANT REFERENCES
-	ON SCHEMA::dbo
-	TO [NT SERVICE\SSBExternalActivator]
+    ON SCHEMA::dbo
+    TO [NT SERVICE\SSBExternalActivator]
 GO
 
 USE [master]
@@ -393,7 +406,7 @@ GO
 
 IF NOT EXISTS (SELECT * FROM sys.syslogins WHERE name = 'NT AUTHORITY\ANONYMOUS LOGON')
 BEGIN
-	CREATE LOGIN [NT AUTHORITY\ANONYMOUS LOGON] FROM WINDOWS
+    CREATE LOGIN [NT AUTHORITY\ANONYMOUS LOGON] FROM WINDOWS
 END
 
 USE [TrackingDB]
@@ -401,7 +414,7 @@ GO
 
 IF NOT EXISTS (SELECT * FROM sys.sysusers WHERE name = 'NT AUTHORITY\ANONYMOUS LOGON')
 BEGIN
-	CREATE USER [NT AUTHORITY\ANONYMOUS LOGON] FOR LOGIN [NT AUTHORITY\ANONYMOUS LOGON]
+    CREATE USER [NT AUTHORITY\ANONYMOUS LOGON] FOR LOGIN [NT AUTHORITY\ANONYMOUS LOGON]
 END
 GO
 
@@ -413,7 +426,7 @@ GO
 
 IF NOT EXISTS (SELECT * FROM sys.sysusers WHERE name = 'NT AUTHORITY\ANONYMOUS LOGON')
 BEGIN
-	CREATE USER [NT AUTHORITY\ANONYMOUS LOGON] FOR LOGIN [NT AUTHORITY\ANONYMOUS LOGON]
+    CREATE USER [NT AUTHORITY\ANONYMOUS LOGON] FOR LOGIN [NT AUTHORITY\ANONYMOUS LOGON]
 END
 GO
 
@@ -422,25 +435,25 @@ GO
 
 -- Allows CONNECT to [SourceDB].
 GRANT CONNECT
-	TO [NT AUTHORITY\ANONYMOUS LOGON]
+    TO [NT AUTHORITY\ANONYMOUS LOGON]
 GO
  
 -- Allows RECEIVE from the queue for the external actvator app.
 GRANT RECEIVE
-	ON [TrackingNotificationQueue]
-	TO [NT AUTHORITY\ANONYMOUS LOGON]
+    ON [TrackingNotificationQueue]
+    TO [NT AUTHORITY\ANONYMOUS LOGON]
 GO
  
 -- Allows VIEW DEFINITION right on the service for the external activator app.
 GRANT VIEW DEFINITION
-	ON SERVICE::[TrackingNotificationService]
-	TO [NT AUTHORITY\ANONYMOUS LOGON]
+    ON SERVICE::[TrackingNotificationService]
+    TO [NT AUTHORITY\ANONYMOUS LOGON]
 GO
  
 -- Allows REFRENCES right on the queue schema for the external activator app.
 GRANT REFERENCES
-	ON SCHEMA::dbo
-	TO [NT AUTHORITY\ANONYMOUS LOGON]
+    ON SCHEMA::dbo
+    TO [NT AUTHORITY\ANONYMOUS LOGON]
 GO
 ```
 

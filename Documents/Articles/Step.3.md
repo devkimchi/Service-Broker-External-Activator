@@ -1,11 +1,11 @@
 # Service Broker External Activator for SQL Server Step by Step #3 #
 
-From the previous post, [Step 2: SQL Server Setup], we have created Service Broker (SB) objects including stored procedures and triggers. In this article, we are going to develop the actual application to consume messages.
+From the previous post, [Step 2: SQL Server Setup](http://devkimchi.com/831/service-broker-external-activator-for-sql-server-step-by-step-2/), we have created Service Broker (SB) objects including stored procedures and triggers. In this article, we are going to develop the actual application to consume messages.
 
 Its sample source codes can be found at: [devkimchi/Service-Broker-External-Activator](https://github.com/devkimchi/Service-Broker-External-Activator)
 
-> * Step 1: Service Broker External Activator Service Setup
-> * Step 2: SQL Server Setup
+> * [Step 1: Service Broker External Activator Service Setup](http://devkimchi.com/811/service-broker-external-activator-for-sql-server-step-by-step-1/)
+> * [Step 2: SQL Server Setup](http://devkimchi.com/831/service-broker-external-activator-for-sql-server-step-by-step-2/)
 > * **Step 3: External Activator Application Development**
 > * Step 4: External Activator Service Configuration
 > * Step 5: Putting Them Altogether
@@ -93,7 +93,7 @@ catch
 }
 ```
 
-As the message is formatted as XML, the message is populated as `byte` array then converted to an XDocument instance for further processing. Once the processing is complete, the conversation opened by stored procedure should be closed like below:
+As the message is formatted as XML, the message is populated as `byte` array then converted to an `XDocument` instance for further processing. Once the processing is complete, the conversation is opened by stored procedure should be closed like below:
 
 ```csharp
 private static void EndConversation(SqlConnection conn, SqlTransaction transaction, Guid conversationHandle)
@@ -116,7 +116,7 @@ command.Parameters.Add(new SqlParameter("@handle", conversationHandle));
 command.Parameters.Add(new SqlParameter("@data", data));
 ```
 
-The last part of this application is to compare and store the changes into the tracking database. This logic can be found at the method, `ProcessMessage(XDocument xml)`. The method handles XML document like [this](https://github.com/devkimchi/Service-Broker-External-Activator/blob/dev/Documents/Samples/SampleMessage.xml). This method is fairly straight forward, so I won't explain its details here.
+The last part of this application is to compare and store the changes into the tracking database. This logic can be found at the method, `ProcessMessage(XDocument xml)`. The method handles XML document like [this](https://github.com/devkimchi/Service-Broker-External-Activator/blob/dev/Documents/Samples/SampleMessage.xml). This method is fairly straight forward, so I won't explain its details here. As well as this method implements very basic data insert statement, it will vary depending on your business requirements &ndash; you can implement this part with Entity Framework, Dependency Injection or whatever you want.
 
 
 ---

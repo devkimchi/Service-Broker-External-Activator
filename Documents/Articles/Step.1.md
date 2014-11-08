@@ -7,7 +7,7 @@ Basically, this series of articles are based on several resources including [Ann
 Its sample source codes can be found at: [devkimchi/Service-Broker-External-Activator](https://github.com/devkimchi/Service-Broker-External-Activator)
 
 > * **Step 1: Service Broker External Activator Service Setup**
-> * Step 2: SQL Server Setup
+> * [Step 2: SQL Server Setup](http://devkimchi.com/831/service-broker-external-activator-for-sql-server-step-by-step-2/)
 > * Step 3: External Activator Application Development
 > * Step 4: External Activator Service Configuration
 > * Step 5: Putting Them Altogether
@@ -57,4 +57,4 @@ Allow `Full Control` onto the `SSB EA Admin` account group and the virtual accou
 
 
 ---
-Now, we are ready to run this Windows Service. Before starting the service, we need to setup SQL Server first. In the next post, [Step 2: SQL Server Setup], we will setup SQL Server to enable SB.
+Now, we are ready to run this Windows Service. Before starting the service, we need to setup SQL Server first. In the next post, [Step 2: SQL Server Setup](http://devkimchi.com/831/service-broker-external-activator-for-sql-server-step-by-step-2/), we will setup SQL Server to enable SB.

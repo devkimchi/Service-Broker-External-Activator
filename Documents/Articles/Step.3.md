@@ -13,7 +13,7 @@ Its sample source codes can be found at: [devkimchi/Service-Broker-External-Acti
 
 ## External Activator Application ##
 
-As you can find the complete source code from the GitHub repository, the main part of this application is the `ProcessRequests()` method. We will only look through several lines within the method.
+As you can find the complete source code from the [GitHub repository](https://github.com/devkimchi/Service-Broker-External-Activator/blob/master/SourceCodes/02_Apps/SbeaSample.ConsoleApp/Program.cs), the main part of this application is the `ProcessRequests()` method. We will only look through several lines within the method.
 
 ```csharp
 using (var conn = new SqlConnection(_csbSource.ToString()))
@@ -42,7 +42,7 @@ command.CommandText = String.Format("WAITFOR (RECEIVE TOP(1) conversation_handle
                                     _waitforTimeout);
 ```
 
-As mentioned in the [previous post](#creating-stored-procedures), the stored procedure has sent a request message. With the SQL statement above receives the message.
+As mentioned in the [previous post](http://devkimchi.com/831/service-broker-external-activator-for-sql-server-step-by-step-2/#creating-stored-procedures), the stored procedure has sent a request message. With the SQL statement above receives the message.
 
 
 ```csharp
@@ -116,7 +116,7 @@ command.Parameters.Add(new SqlParameter("@handle", conversationHandle));
 command.Parameters.Add(new SqlParameter("@data", data));
 ```
 
-The last part of this application is to compare and store the changes into the tracking database. This logic can be found at the method, `ProcessMessage(XDocument xml)`. The method handles XML document like [this](https://github.com/devkimchi/Service-Broker-External-Activator/blob/dev/Documents/Samples/SampleMessage.xml). This method is fairly straight forward, so I won't explain its details here. As well as this method implements very basic data insert statement, it will vary depending on your business requirements &ndash; you can implement this part with Entity Framework, Dependency Injection or whatever you want.
+The last part of this application is to compare and store the changes into the tracking database. This logic can be found at the method, `ProcessMessage(XDocument xml)`. The method handles XML document like [this](https://github.com/devkimchi/Service-Broker-External-Activator/blob/dev/Documents/Samples/SampleMessage.xml). In order to be as simple as possible, this method just uses hard-coded SQL scripts, which is not desirable for production use. For your business requirements, this should be modified &ndash; you can implement this part with Entity Framework, Dependency Injection or whatever you want.
 
 
 ---

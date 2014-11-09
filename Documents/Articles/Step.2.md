@@ -6,7 +6,7 @@ Its sample source codes can be found at: [devkimchi/Service-Broker-External-Acti
 
 > * [Step 1: Service Broker External Activator Service Setup](http://devkimchi.com/811/service-broker-external-activator-for-sql-server-step-by-step-1/)
 > * **Step 2: SQL Server Setup**
-> * Step 3: External Activator Application Development
+> * [Step 3: External Activator Application Development](http://devkimchi.com/891/service-broker-external-activator-for-sql-server-step-by-step-3/)
 > * Step 4: External Activator Service Configuration
 > * Step 5: Putting Them Altogether
 
@@ -460,4 +460,4 @@ GO
 The scripts above give permissions to both `NT SERVICE\SSBExternalActivator` and `NT AUTHORITY\ANONYMOUS LOGON` to access to `TrackingNotificationService` and `TrackingNotificationQueue`. By granting permissions like this, the EA application can receive messages from SB.
 
 ---
-So far, we have created service broker objects. In the next post, [Step 3: External Activator Application Development], we will develop an application to consume the messages sent from SB.
+So far, we have created service broker objects. In the next post, [Step 3: External Activator Application Development](http://devkimchi.com/891/service-broker-external-activator-for-sql-server-step-by-step-3/), we will develop an application to consume the messages sent from SB.

@@ -7,7 +7,7 @@ Its sample source codes can be found at: [devkimchi/Service-Broker-External-Acti
 > * [Step 1: Service Broker External Activator Service Setup](http://devkimchi.com/811/service-broker-external-activator-for-sql-server-step-by-step-1/)
 > * **Step 2: SQL Server Setup**
 > * [Step 3: External Activator Application Development](http://devkimchi.com/891/service-broker-external-activator-for-sql-server-step-by-step-3/)
-> * Step 4: External Activator Service Configuration
+> * [Step 4: External Activator Service Configuration](http://devkimchi.com/951/service-broker-external-activator-for-sql-server-step-by-step-4/)
 > * Step 5: Putting Them Altogether
 
 
@@ -190,6 +190,7 @@ GO
 Even though, this is not the exact simile, it is easy to understand that `INITIATOR` is a message sender and `TARGET` is a message receiver.
 
 
+<a name="queue"></a>
 #### `Queue` ####
 
 Messages are stored in queues before being consumed by services.
@@ -220,6 +221,7 @@ GO
 Each queue takes responsibility for each message types. Wait. There is another queue, `TrackingNotificationQueue` , doesn't belong to either request nor response. This queue will be consumed by EA, which will be explained later on.
 
 
+<a name="service"></a>
 #### `Service` ####
 
 Services manage queues which a contract combines.
@@ -241,6 +243,7 @@ GO
 There are three distinctive services. One for INITIATOR (sender) and another for TARGET (receiver) and the other for EA. Please bear in mind that sender looks after the **RESPONSE** queue and receiver takes care of the **REQUEST** queue. Both request service and response service are bundled by a contract, while `TrackingNotificationService` uses default event notification contract.
 
 
+<a name="event-notification"></a>
 #### `Event Notification` ####
 
 We have created all necessary message types, contracts, queues and services. Now, we need to create an event notification to throw messages to EA.

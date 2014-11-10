@@ -9,7 +9,7 @@ Its sample source codes can be found at: [devkimchi/Service-Broker-External-Acti
 > * **Step 1: Service Broker External Activator Service Setup**
 > * [Step 2: SQL Server Setup](http://devkimchi.com/831/service-broker-external-activator-for-sql-server-step-by-step-2/)
 > * [Step 3: External Activator Application Development](http://devkimchi.com/891/service-broker-external-activator-for-sql-server-step-by-step-3/)
-> * Step 4: External Activator Service Configuration
+> * [Step 4: External Activator Service Configuration](http://devkimchi.com/951/service-broker-external-activator-for-sql-server-step-by-step-4/)
 > * Step 5: Putting Them Altogether
 
 In this article, we are going to install Service Broker External Activator Service.

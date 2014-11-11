@@ -8,7 +8,7 @@ Its sample source codes can be found at: [devkimchi/Service-Broker-External-Acti
 > * [Step 2: SQL Server Setup](http://devkimchi.com/831/service-broker-external-activator-for-sql-server-step-by-step-2/)
 > * [Step 3: External Activator Application Development](http://devkimchi.com/891/service-broker-external-activator-for-sql-server-step-by-step-3/)
 > * **Step 4: External Activator Service Configuration**
-> * Step 5: Putting Them Altogether
+> * [Step 5: Putting Them Altogether](http://devkimchi.com/1051/service-broker-external-activator-for-sql-server-step-by-step-5/)
 
 
 ## External Activator Service Configuration ##
@@ -84,5 +84,5 @@ If you see the [schema definition of EA](http://schemas.microsoft.com/sqlserver/
 
 
 ---
-We have so far configured EA Windows Service to run. In the next article, as a final step, [Step 5: Putting Them Altogether], we will put everything together, run the Service, and run some sample `INSERT`, `UPDATE`, and `DELETE`.
+We have so far configured EA Windows Service to run. In the next article, as a final step, [Step 5: Putting Them Altogether](http://devkimchi.com/1051/service-broker-external-activator-for-sql-server-step-by-step-5/), we will put everything together, run the Service, and run some sample `INSERT`, `UPDATE`, and `DELETE`.
 

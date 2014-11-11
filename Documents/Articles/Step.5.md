@@ -15,7 +15,7 @@ Its sample source codes can be found at: [devkimchi/Service-Broker-External-Acti
 
 We are ready to start the Service. Open Computer Management Console and start the Windows Service.
 
-![](SSBEAS.Install.06.png)
+![](http://blob.devkimchi.com/devkimchiwp/2014/11/SSBEAS.Install.06.png)
 
 Once it's started, you will find the log at `C:\Program Files\Service Broker\External Activator\Log\EATrace.log`. The log should look like:
 
@@ -76,7 +76,7 @@ SELECT * FROM [TrackingDB].[dbo].[TrackingLogs]
 
 The result might look like:
 
-![](SSBEAS.Run.01.png)
+![](http://blob.devkimchi.com/devkimchiwp/2014/11/SSBEAS.Run_.01.png)
 
 
 ### `UPDATE` ###
@@ -99,7 +99,7 @@ And the result of the query looks like:
 SELECT * FROM [TrackingDB].[dbo].[TrackingLogs]
 ```
 
-![](SSBEAS.Run.02.png)
+![](http://blob.devkimchi.com/devkimchiwp/2014/11/SSBEAS.Run_.02.png)
 
 
 ### `DELETE` ###
@@ -122,7 +122,7 @@ Run the query again to find out log details
 SELECT * FROM [TrackingDB].[dbo].[TrackingLogs]
 ```
 
-![](SSBEAS.Run.03.png)
+![](http://blob.devkimchi.com/devkimchiwp/2014/11/SSBEAS.Run_.03.png)
 
 
 ---

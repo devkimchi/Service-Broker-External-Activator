@@ -22,6 +22,7 @@ This code is explained in:
 * [Microsoft® SQL Server® 2012 Feature Pack](http://www.microsoft.com/en-us/download/details.aspx?id=29065)
 * [SQL Server Service Broker Product Samples](http://msftsbprodsamples.codeplex.com)
 * [Code Sample for Pro SQL Server 2008 Service Broker](http://www.apress.com/9781590599990)
+* [SQL Server: Service Broker Tips and Tricks](https://myadventuresincoding.wordpress.com/2007/11/22/sql-server-service-broker-tips-and-tricks/)
 
 
 ## License ##
